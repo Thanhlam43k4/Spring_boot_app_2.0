@@ -1,2 +1,2 @@
 # Spring_boot_app
-An basic application to serve for jenkins practiacal
+An basic application to serve for jenkins practical
