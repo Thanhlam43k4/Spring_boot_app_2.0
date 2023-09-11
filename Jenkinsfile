@@ -1,57 +1,41 @@
 pipeline {
     agent any
-     tools {
-        maven 'Maven' 
-        }
-    stages {
-        stage("Test"){
+    tools{
+        maven 'Maven-3.9.4'
+    }
+    stages{
+        stage('Git checkout'){
             steps{
-                // mvn test
-                sh "mvn test"
-                slackSend channel: 'youtubejenkins', message: 'Job Started'
-                
+                echo "Pull Code From GitHub..."
+                git credentialsId: 'jenkins_token1', url: 'https://github.com/Thanhlam43k4/Spring_boot_app_2.0.git'
             }
-            
         }
-        stage("Build"){
+        stage('Test'){
             steps{
-                sh "mvn package"
-                
+                echo "Testing....."
+                sh 'mvn --version'
+                sh 'java --version'
+                sh 'mvn clean package'
             }
-            
         }
-        stage("Deploy on Test"){
+        stage('Packaging/Pushing image'){
             steps{
-                // deploy on container -> plugin
-                deploy adapters: [tomcat9(credentialsId: 'tomcatserverdetails1', path: '', url: 'http://192.168.0.118:8090')], contextPath: '/app', war: '**/*.war'
-              
-            }
-            
-        }
-        stage("Deploy on Prod"){
-             input {
-                message "Should we continue?"
-                ok "Yes we Should"
-            }
-            
-            steps{
-                // deploy on container -> plugin
-                deploy adapters: [tomcat9(credentialsId: 'tomcatserverdetails1', path: '', url: 'http://192.168.0.119:8080')], contextPath: '/app', war: '**/*.war'
+                    sh 'ls -ltr'
+                    withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
+                        sh 'docker build -t thanhlam2k4/spring_boot_app:4.0 .'
+                        sh 'docker push thanhlam2k4/spring_boot_app:4.0'
 
-            }
+                    }
+                         
+                }
         }
+            
+        
     }
-    post{
-        always{
-            echo "========always========"
-        }
-        success{
-            echo "========pipeline executed successfully ========"
-             slackSend channel: 'youtubejenkins', message: 'Success'
-        }
-        failure{
-            echo "========pipeline execution failed========"
-             slackSend channel: 'youtubejenkins', message: 'Job Failed'
-        }
-    }
+    // post{
+    //     // Clean after build
+    //     always{
+    //         cleanWs()
+    //     }
+    // }
 }
