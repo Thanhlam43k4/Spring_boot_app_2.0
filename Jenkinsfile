@@ -29,6 +29,14 @@ pipeline {
                          
                 }
         }
+        stage('Deploying to Kubernetes!!'){
+            steps{
+                scripts{
+                    kubernetesDeploy (configs: 'deploymentservice.yaml',kubeconfigId: 'k8sid')
+                }
+            }
+
+        }
             
         
     }

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: Spring_Deploy
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: spring_app
+  template:
+    metadata:
+      labels:
+        app: spring_app
+    spec:
+      containers:
+      - name: Spring_App_Con
+        image: thanhlam2k4/spring_boot_app:4.0
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: Spring_App_Ser
+spec:
+  type: LoadBalancer
+  selector:
+    app: spring_app
+  ports:
+  - port: 3000
+    targetPort: 3000
