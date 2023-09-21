@@ -22,8 +22,8 @@ pipeline {
             steps{
                     sh 'ls -ltr'
                     withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                        sh 'docker build -t thanhlam2k4/spring_boot_app:4.0 .'
-                        sh 'docker push thanhlam2k4/spring_boot_app:4.0'
+                        sh 'docker build -t thanhlam2k4/spring_boot_app:6.0 .'
+                        sh 'docker push thanhlam2k4/spring_boot_app:6.0'
 
                     }
                          
